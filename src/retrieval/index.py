@@ -26,19 +26,22 @@ class LocalEmbeddingIndex:
         self,
         settings: Settings,
         collection_name: str,
-        documents: list[dict[str, Any]],
-        persist_path: Path,
+        documents: list[dict[str, Any]] | None = None,
+        persist_path: Path | None = None,
     ):
         self.settings = settings
         self.collection_name = collection_name
-        self.documents = documents
-        self.persist_path = persist_path
+        self.documents = documents or []
+        self.persist_path = persist_path or settings.paths.chroma_dir
         self.embedding_backend = "chroma"
         self.embedding_model = MiniLMEmbeddings(settings.embedding_model)
-        self.client = chromadb.PersistentClient(path=str(persist_path))
-        self.collection = self.client.get_collection(name=collection_name)
-        self.documents_by_paper_id = {document["paper_id"].lower(): document for document in documents}
-        self.documents_by_title = {document["title"].lower(): document for document in documents}
+        self.client = chromadb.PersistentClient(path=str(self.persist_path))
+        try:
+            self.collection = self.client.get_collection(name=collection_name)
+        except Exception:
+            self.collection = None
+        self.documents_by_paper_id = {document["paper_id"].lower(): document for document in self.documents}
+        self.documents_by_title = {document["title"].lower(): document for document in self.documents}
 
     @staticmethod
     def _build_documents(df: pd.DataFrame) -> list[dict[str, Any]]:
@@ -139,6 +142,8 @@ class LocalEmbeddingIndex:
         )
 
     def search(self, query: str, top_k: int | None = None) -> list[SearchResult]:
+        if self.collection is None:
+            raise RuntimeError(f"Chroma collection '{self.collection_name}' has not been built yet.")
         query_embedding = self.embedding_model.embed_query(query)
         results = self.collection.query(
             query_embeddings=[query_embedding],
@@ -164,6 +169,24 @@ class LocalEmbeddingIndex:
                 )
             )
         return scored
+
+    def build_from_clean(self, clean_path: Path | None = None) -> "LocalEmbeddingIndex":
+        """Build this instance from the clean JSON artifact used by lab smoke tests."""
+        path = clean_path or self.settings.paths.clean_json
+        if not path.exists():
+            raise FileNotFoundError(f"Clean dataset not found: {path}")
+        df = pd.read_json(path)
+        output_map = {
+            self.settings.baseline_collection_name: self.settings.paths.embeddings_json,
+            self.settings.corrupted_collection_name: self.settings.paths.corrupted_embeddings_json,
+            self.settings.repaired_collection_name: self.settings.paths.repaired_embeddings_json,
+        }
+        built = type(self).build(df, self.settings, output_map.get(self.collection_name))
+        self.__dict__.update(built.__dict__)
+        return self
+
+    def semantic_search(self, query: str, top_k: int | None = None) -> list[SearchResult]:
+        return self.search(query, top_k=top_k)
 
     def lookup(self, value: str) -> dict[str, Any] | None:
         needle = value.strip().lower()

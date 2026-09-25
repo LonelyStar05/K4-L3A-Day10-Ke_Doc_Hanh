@@ -41,6 +41,11 @@ class Paths:
     repaired_answers: Path
     comparison_report: Path
 
+    @property
+    def test_set_json(self) -> Path:
+        """Compatibility name used by the lab checkpoint commands."""
+        return self.eval_testset
+
 
 @dataclass(frozen=True)
 class Settings:
