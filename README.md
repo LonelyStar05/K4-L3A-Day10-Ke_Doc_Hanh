@@ -7,6 +7,19 @@
 
 ---
 
+## Kết quả nhóm Kẻ Độc Hành
+
+Thành viên: Nguyễn Tú Tài (`02455`), Trần Đại Nhân (`02642`), Nguyễn Phú Bình (`02410`). Chi tiết phân công tại [`docs/TEAM.md`](docs/TEAM.md).
+
+| Metric | Baseline | Corrupted | Repaired |
+| --- | ---: | ---: | ---: |
+| Retrieval hit rate | 1.000 | 0.000 | 1.000 |
+| Mean token F1 | 1.000 | 0.321 | 1.000 |
+
+Pipeline hoàn thành 24 records, GX 1.x quality gate, ChromaDB/MiniLM, năm loại benchmark question, sáu corruption scenarios và idempotent repair. Xem [`data/reports/phase1_report.md`](data/reports/phase1_report.md) và [`data/reports/corruption_report.md`](data/reports/corruption_report.md).
+
+---
+
 ### 🗺️ Bản Đồ Tài Liệu Cho Buổi Lab (Đọc gì trước, đọc gì sau?):
 Đừng để nhiều file tài liệu làm bạn bị ngợp! Toàn bộ tài liệu chi tiết được quy hoạch gọn gàng trong thư mục [`docs/`](docs/):
 - 🚀 **Bắt tay vào làm ngay:** Mở [Hướng Dẫn Kỹ Thuật Chi Tiết (docs/Guide.md)](docs/Guide.md) và bám sát tiến trình [Các Mốc Thời Gian (docs/CHECKPOINTS.md)](docs/CHECKPOINTS.md).

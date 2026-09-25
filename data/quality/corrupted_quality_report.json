@@ -1,9 +1,9 @@
 {
-  "report_name": "test",
-  "timestamp": "2026-09-25T08:46:11.271311+00:00",
-  "success": true,
+  "report_name": "corrupted",
+  "timestamp": "2026-09-25T08:57:32.864816+00:00",
+  "success": false,
   "engine": "great-expectations-1.x",
-  "gx_success": true,
+  "gx_success": false,
   "row_count": 24,
   "checks": [
     {
@@ -22,35 +22,35 @@
     },
     {
       "name": "paper_id_unique",
-      "success": true,
-      "observed_value": 0
+      "success": false,
+      "observed_value": 10
     },
     {
       "name": "summary_length_at_least_30",
-      "success": true,
-      "observed_value": 0
+      "success": false,
+      "observed_value": 6
     }
   ],
   "freshness": {
-    "timestamp": "2026-09-25T08:46:11.269311+00:00",
-    "latest_published": "2026-07-22",
-    "oldest_published": "2026-03-28",
+    "timestamp": "2026-09-25T08:57:32.863816+00:00",
+    "latest_published": "2026-06-05",
+    "oldest_published": "2021-06-07",
     "freshness_threshold_days": 180,
-    "stale_rows": 1,
+    "stale_rows": 14,
     "total_rows": 24,
-    "stale_ratio": 0.0417,
+    "stale_ratio": 0.5833,
     "max_allowed_stale_ratio": 0.25,
-    "is_fresh": true
+    "is_fresh": false
   },
   "gx_results": {
-    "success": true,
+    "success": false,
     "results": [
       {
         "success": true,
         "expectation_config": {
           "type": "expect_table_row_count_to_be_between",
           "kwargs": {
-            "batch_id": "papers_source_test-papers_asset_test",
+            "batch_id": "papers_source_corrupted-papers_asset_corrupted",
             "min_value": 5,
             "max_value": 5000
           },
@@ -72,7 +72,7 @@
         "expectation_config": {
           "type": "expect_column_values_to_not_be_null",
           "kwargs": {
-            "batch_id": "papers_source_test-papers_asset_test",
+            "batch_id": "papers_source_corrupted-papers_asset_corrupted",
             "column": "paper_id"
           },
           "meta": {},
@@ -94,11 +94,11 @@
         }
       },
       {
-        "success": true,
+        "success": false,
         "expectation_config": {
           "type": "expect_column_values_to_be_unique",
           "kwargs": {
-            "batch_id": "papers_source_test-papers_asset_test",
+            "batch_id": "papers_source_corrupted-papers_asset_corrupted",
             "column": "paper_id"
           },
           "meta": {},
@@ -106,15 +106,58 @@
         },
         "result": {
           "element_count": 24,
-          "unexpected_count": 0,
-          "unexpected_percent": 0.0,
-          "partial_unexpected_list": [],
+          "unexpected_count": 10,
+          "unexpected_percent": 41.66666666666667,
+          "partial_unexpected_list": [
+            "10.1145/3637528.3671824",
+            "10.1145/3637528.3671823",
+            "10.1145/3637528.3671822",
+            "10.1145/3637528.3671821",
+            "10.1145/3637528.3671810",
+            "10.1145/3637528.3671824",
+            "10.1145/3637528.3671823",
+            "10.1145/3637528.3671822",
+            "10.1145/3637528.3671821",
+            "10.1145/3637528.3671810"
+          ],
           "missing_count": 0,
           "missing_percent": 0.0,
-          "unexpected_percent_total": 0.0,
-          "unexpected_percent_nonmissing": 0.0,
-          "partial_unexpected_counts": [],
-          "partial_unexpected_index_list": []
+          "unexpected_percent_total": 41.66666666666667,
+          "unexpected_percent_nonmissing": 41.66666666666667,
+          "partial_unexpected_counts": [
+            {
+              "value": "10.1145/3637528.3671810",
+              "count": 2
+            },
+            {
+              "value": "10.1145/3637528.3671821",
+              "count": 2
+            },
+            {
+              "value": "10.1145/3637528.3671822",
+              "count": 2
+            },
+            {
+              "value": "10.1145/3637528.3671823",
+              "count": 2
+            },
+            {
+              "value": "10.1145/3637528.3671824",
+              "count": 2
+            }
+          ],
+          "partial_unexpected_index_list": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
         },
         "meta": {},
         "exception_info": {
@@ -128,7 +171,7 @@
         "expectation_config": {
           "type": "expect_column_values_to_not_be_null",
           "kwargs": {
-            "batch_id": "papers_source_test-papers_asset_test",
+            "batch_id": "papers_source_corrupted-papers_asset_corrupted",
             "column": "title"
           },
           "meta": {},
@@ -154,7 +197,7 @@
         "expectation_config": {
           "type": "expect_column_values_to_not_be_null",
           "kwargs": {
-            "batch_id": "papers_source_test-papers_asset_test",
+            "batch_id": "papers_source_corrupted-papers_asset_corrupted",
             "column": "text_for_embedding"
           },
           "meta": {},
@@ -176,11 +219,11 @@
         }
       },
       {
-        "success": true,
+        "success": false,
         "expectation_config": {
           "type": "expect_column_value_lengths_to_be_between",
           "kwargs": {
-            "batch_id": "papers_source_test-papers_asset_test",
+            "batch_id": "papers_source_corrupted-papers_asset_corrupted",
             "column": "summary",
             "min_value": 30
           },
@@ -189,15 +232,34 @@
         },
         "result": {
           "element_count": 24,
-          "unexpected_count": 0,
-          "unexpected_percent": 0.0,
-          "partial_unexpected_list": [],
+          "unexpected_count": 6,
+          "unexpected_percent": 25.0,
+          "partial_unexpected_list": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
           "missing_count": 0,
           "missing_percent": 0.0,
-          "unexpected_percent_total": 0.0,
-          "unexpected_percent_nonmissing": 0.0,
-          "partial_unexpected_counts": [],
-          "partial_unexpected_index_list": []
+          "unexpected_percent_total": 25.0,
+          "unexpected_percent_nonmissing": 25.0,
+          "partial_unexpected_counts": [
+            {
+              "value": "",
+              "count": 6
+            }
+          ],
+          "partial_unexpected_index_list": [
+            0,
+            1,
+            2,
+            19,
+            20,
+            21
+          ]
         },
         "meta": {},
         "exception_info": {
@@ -207,13 +269,13 @@
         }
       }
     ],
-    "suite_name": "papers_suite_test",
+    "suite_name": "papers_suite_corrupted",
     "suite_parameters": {},
     "statistics": {
       "evaluated_expectations": 6,
-      "successful_expectations": 6,
-      "unsuccessful_expectations": 0,
-      "success_percent": 100.0
+      "successful_expectations": 4,
+      "unsuccessful_expectations": 2,
+      "success_percent": 66.66666666666666
     },
     "meta": {
       "great_expectations_version": "1.23.1",
@@ -221,13 +283,13 @@
         "batch_data": "PandasDataFrame"
       },
       "batch_markers": {
-        "ge_load_time": "20260925T084611.216045Z",
-        "pandas_data_fingerprint": "1f6d9a74716d0159d68a606df45fd9e2"
+        "ge_load_time": "20260925T085732.823348Z",
+        "pandas_data_fingerprint": "e5dfc4b2f68ec1ff00b52b5f58887e7f"
       },
       "active_batch_definition": {
-        "datasource_name": "papers_source_test",
+        "datasource_name": "papers_source_corrupted",
         "data_connector_name": "fluent",
-        "data_asset_name": "papers_asset_test",
+        "data_asset_name": "papers_asset_corrupted",
         "batch_identifiers": {
           "dataframe": "<DATAFRAME>"
         }

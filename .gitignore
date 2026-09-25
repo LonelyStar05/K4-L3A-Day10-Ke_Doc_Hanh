@@ -6,3 +6,6 @@ src/*.egg-info/
 lab/
 **/__pycache__/
 doc_verification_report.md
+data/chroma/*
+!data/chroma/.gitkeep
+data/quality/test_freshness_report.json
