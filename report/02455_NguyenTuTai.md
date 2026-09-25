@@ -2,21 +2,21 @@
 
 ## Vai trò
 
-Data Ingestion & Cleaning Owner.
+Pipeline Lead.
 
 ## Phần việc
 
-- Parse Crossref DOI, title, abstract JATS, authors, categories và publication date.
-- Triển khai retry, xử lý 429 và fallback sang raw snapshot offline.
-- Chuẩn hóa 24 records, tính `age_days`, deduplicate và tạo `text_for_embedding`.
+- Quản lý cấu hình chung và tích hợp các module thành pipeline end-to-end.
+- Điều phối baseline, corruption và idempotent repair flows.
+- Rà soát khả năng chạy offline và tái hiện artifacts trên môi trường mới.
 
 ## Bằng chứng
 
-- `src/ingestion/crossref.py`
-- `src/ingestion/cleaning.py`
-- `data/raw/`
-- `data/clean/papers_clean.csv`
+- `src/core/`
+- `src/pipelines/`
+- `script/run_phase1.py`
+- `script/run_corruption_flow.py`
 
 ## Kết quả học được
 
-Hiểu cách bảo toàn raw lineage, thiết kế dual-mode ingestion và tạo data contract ổn định trước khi embedding.
+Hiểu cách điều phối một data/RAG pipeline hoàn chỉnh, quản lý phụ thuộc giữa các module và bảo đảm luồng repair chạy idempotent.

@@ -11,10 +11,10 @@
 
 | STT | Họ và tên | MSSV | Vai trò chính |
 | --: | --- | --- | --- |
-| 1 | Nguyễn Tú Tài | 02455 | Ingestion & cleaning |
-| 2 | Trần Đại Nhân | 02642 | Evaluation & observability |
-| 3 | Nguyễn Phú Bình | 02410 | Retrieval, corruption & integration |
-| 4 | Phan Văn Nghị | 02632 | QA, testing & reproducibility |
+| 1 | Nguyễn Tú Tài | 02455 | Pipeline Lead |
+| 2 | Nguyễn Phú Bình | 02410 | Data Foundation Owner |
+| 3 | Trần Đại Nhân | 02642 | RAG Specialist |
+| 4 | Phan Văn Nghị | 02632 | Observability & Evaluation Lead |
 
 ## 2. Tóm tắt kết quả
 

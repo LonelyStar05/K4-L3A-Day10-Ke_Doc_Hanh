@@ -10,10 +10,10 @@
 
 | STT | Họ và tên | MSSV | Email | Vai trò & Phân công công việc | Báo cáo cá nhân |
 |---:|---|---|---|---|---|
-| 1 | Nguyễn Tú Tài | 02455 | — | Data Ingestion & Cleaning Owner (`crossref.py`, `cleaning.py`, raw/clean artifacts) | `report/02455_NguyenTuTai.md` |
-| 2 | Trần Đại Nhân | 02642 | — | Evaluation & Observability Owner (`testset.py`, `quality.py`, reporting) | `report/02642_TranDaiNhan.md` |
-| 3 | Nguyễn Phú Bình | 02410 | — | Corruption, Retrieval & Pipeline Integrator (`corruption.py`, ChromaDB, phase pipelines) | `report/02410_NguyenPhuBinh.md` |
-| 4 | Phan Văn Nghị | 02632 | — | QA & Reproducibility Owner (automated tests, artifact validation, runbook) | `report/02632_PhanVanNghi.md` |
+| 1 | Nguyễn Tú Tài | 02455 | — | Pipeline Lead (`core/`, phase pipelines, corruption/repair integration) | `report/02455_NguyenTuTai.md` |
+| 2 | Nguyễn Phú Bình | 02410 | — | Data Foundation Owner (`crossref.py`, `cleaning.py`, raw/clean artifacts) | `report/02410_NguyenPhuBinh.md` |
+| 3 | Trần Đại Nhân | 02642 | — | RAG Specialist (MiniLM embeddings, ChromaDB, retrieval and QA agent) | `report/02642_TranDaiNhan.md` |
+| 4 | Phan Văn Nghị | 02632 | — | Observability & Evaluation Lead (GX quality, freshness, benchmark and reporting) | `report/02632_PhanVanNghi.md` |
 
 ---
 
@@ -21,36 +21,36 @@
 
 ### Nguyễn Tú Tài - 02455
 
-- **Vai trò:** Phụ trách nguồn dữ liệu, chuẩn hóa và data lineage.
+- **Vai trò:** Pipeline Lead, điều phối kiến trúc, tích hợp và vận hành luồng end-to-end.
 - **Công việc chi tiết:**
-  - Bóc tách Crossref payload, chuẩn hóa DOI, tiêu đề, JATS abstract, tác giả, chuyên ngành và ngày ISO 8601.
-  - Hoàn thiện cơ chế retry và offline fallback từ `data/raw/crossref_response.json`.
-  - Xây dựng clean dataframe 24 dòng, tính `age_days`, khử trùng lặp và tạo `text_for_embedding` năm phần.
-- **Kết quả:** `data/raw/`, `data/clean/papers_clean.csv`, `data/clean/papers_clean.json`.
-
-### Trần Đại Nhân - 02642
-
-- **Vai trò:** Phụ trách benchmark, data quality, freshness và báo cáo.
-- **Công việc chi tiết:**
-  - Xây dựng test set cố định gồm năm loại câu hỏi: summary, authors, date, category và multi-hop.
-  - Thiết lập Great Expectations 1.x bằng ephemeral context, kiểm tra row count, null, unique và độ dài summary.
-  - Theo dõi freshness SLA, tổng hợp baseline/corrupted/repaired metrics và báo cáo Markdown.
-- **Kết quả:** `data/eval/test_set.json`, `data/quality/`, `data/reports/`.
+  - Quản lý cấu hình `core/` và hợp nhất các module ingestion, quality, retrieval, evaluation thành pipeline thống nhất.
+  - Điều phối `run_phase1.py` và `run_corruption_flow.py`, bảo đảm baseline, corrupted và repaired chạy end-to-end.
+  - Rà soát tính idempotent, offline fallback và khả năng tái hiện toàn bộ bài lab.
+- **Kết quả:** `src/core/`, `src/pipelines/`, `script/`, các artifacts tích hợp trong `data/`.
 
 ### Nguyễn Phú Bình - 02410
 
-- **Vai trò:** Phụ trách retrieval, corruption/repair và tích hợp pipeline.
+- **Vai trò:** Data Foundation Owner, phụ trách nguồn dữ liệu, chuẩn hóa và data lineage.
 - **Công việc chi tiết:**
-  - Xây ChromaDB với `sentence-transformers/all-MiniLM-L6-v2` và ba collection độc lập.
-  - Tiêm đủ sáu lỗi dữ liệu: drop latest, blank summary, text noise, truncated title, stale date và duplicate rows.
-  - Điều phối baseline pipeline và self-healing pipeline phục hồi idempotent từ raw snapshot.
-- **Kết quả:** `data/embeddings/`, `data/results/`, `data/reports/corruption_report.md`.
+  - Bóc tách Crossref payload, chuẩn hóa DOI, tiêu đề, JATS abstract, tác giả, chuyên ngành và ngày ISO 8601.
+  - Hoàn thiện cơ chế retry, xử lý 429 và offline fallback từ `data/raw/crossref_response.json`.
+  - Xây dựng clean dataframe 24 dòng, tính `age_days`, khử trùng lặp và tạo `text_for_embedding` năm phần.
+- **Kết quả:** `src/ingestion/`, `data/raw/`, `data/clean/papers_clean.csv`, `data/clean/papers_clean.json`.
+
+### Trần Đại Nhân - 02642
+
+- **Vai trò:** RAG Specialist, phụ trách embedding, vector retrieval và QA agent.
+- **Công việc chi tiết:**
+  - Xây ChromaDB với `sentence-transformers/all-MiniLM-L6-v2` và các collection độc lập theo trạng thái dữ liệu.
+  - Hoàn thiện semantic search, truy xuất top-k và logic QA dựa trên tài liệu được tìm thấy.
+  - Kiểm tra tác động của dữ liệu bẩn và dữ liệu repaired lên retrieval hit rate, token F1 và câu trả lời.
+- **Kết quả:** `src/retrieval/`, `data/embeddings/`, các Chroma collections và retrieval metrics.
 
 ### Phan Văn Nghị - 02632
 
-- **Vai trò:** Phụ trách QA, kiểm thử tích hợp và khả năng tái hiện kết quả.
+- **Vai trò:** Observability & Evaluation Lead, phụ trách quality gate, freshness, benchmark và báo cáo.
 - **Công việc chi tiết:**
-  - Kiểm tra các component ingestion, cleaning, quality, benchmark và corruption bằng automated tests.
-  - Đối chiếu artifacts baseline/corrupted/repaired với báo cáo và xác minh metrics ba trạng thái.
-  - Rà soát lệnh chạy, cấu hình offline/mock provider và hướng dẫn tái hiện pipeline trên máy mới.
-- **Kết quả:** `tests/`, `data/results/`, `report/group_report.md`, tài liệu hướng dẫn chạy pipeline.
+  - Thiết lập Great Expectations 1.x bằng ephemeral context, kiểm tra row count, null, unique và độ dài summary.
+  - Theo dõi freshness SLA và xây dựng benchmark năm loại câu hỏi dùng chung cho ba trạng thái dữ liệu.
+  - Tổng hợp baseline/corrupted/repaired metrics, xác minh artifacts và sinh báo cáo Markdown đối chiếu.
+- **Kết quả:** `src/observability/`, `src/evaluation/`, `data/quality/`, `data/eval/`, `data/reports/`.

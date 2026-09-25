@@ -2,21 +2,21 @@
 
 ## Vai trò
 
-Corruption, Retrieval & Pipeline Integrator.
+Data Foundation Owner.
 
 ## Phần việc
 
-- Xây ChromaDB index bằng MiniLM và semantic search.
-- Tiêm sáu kịch bản corruption có log lineage chi tiết.
-- Tích hợp baseline, corrupted và idempotent repair pipelines.
+- Parse Crossref DOI, title, abstract JATS, authors, categories và publication date.
+- Triển khai retry, xử lý 429 và fallback sang raw snapshot offline.
+- Chuẩn hóa 24 records, tính `age_days`, deduplicate và tạo `text_for_embedding`.
 
 ## Bằng chứng
 
-- `src/retrieval/`
-- `src/ingestion/corruption.py`
-- `src/pipelines/`
-- `data/results/`, `data/reports/corruption_report.md`
+- `src/ingestion/crossref.py`
+- `src/ingestion/cleaning.py`
+- `data/raw/`
+- `data/clean/papers_clean.csv`
 
 ## Kết quả học được
 
-Hiểu silent failure trong RAG và cách self-healing từ raw snapshot phục hồi đồng thời quality gate lẫn retrieval metrics.
+Hiểu cách bảo toàn raw lineage, thiết kế dual-mode ingestion và tạo data contract ổn định trước khi embedding.

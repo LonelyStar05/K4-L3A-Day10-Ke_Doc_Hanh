@@ -11,6 +11,8 @@
 
 Thành viên: Nguyễn Tú Tài (`02455`), Trần Đại Nhân (`02642`), Nguyễn Phú Bình (`02410`), Phan Văn Nghị (`02632`). Chi tiết phân công tại [`docs/TEAM.md`](docs/TEAM.md).
 
+Vai trò: Nguyễn Tú Tài — Pipeline Lead; Nguyễn Phú Bình — Data Foundation Owner; Trần Đại Nhân — RAG Specialist; Phan Văn Nghị — Observability & Evaluation Lead.
+
 | Metric | Baseline | Corrupted | Repaired |
 | --- | ---: | ---: | ---: |
 | Retrieval hit rate | 1.000 | 0.000 | 1.000 |

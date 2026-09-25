@@ -2,21 +2,21 @@
 
 ## Vai trò
 
-QA & Reproducibility Owner.
+Observability & Evaluation Lead.
 
 ## Phần việc
 
-- Kiểm tra tự động các component ingestion, cleaning, quality, benchmark và corruption.
-- Đối chiếu artifacts và metrics giữa baseline, corrupted và repaired để phát hiện sai lệch.
-- Rà soát hướng dẫn chạy offline, mock provider và khả năng tái hiện pipeline trên môi trường mới.
+- Xây GX 1.x quality gate và freshness SLA 180 ngày/25% stale ratio.
+- Tạo benchmark năm loại câu hỏi dùng chung cho cả ba trạng thái dữ liệu.
+- Tổng hợp metrics, đối chiếu artifacts và sinh báo cáo baseline/corruption có thể kiểm chứng.
 
 ## Bằng chứng
 
-- `tests/`
-- `data/results/`
-- `report/group_report.md`
-- `README.md`, `docs/TEAM.md`
+- `src/observability/quality.py`
+- `src/observability/reporting.py`
+- `src/evaluation/testset.py`
+- `data/quality/`, `data/eval/`, `data/reports/`
 
 ## Kết quả học được
 
-Hiểu cách xây dựng kiểm thử hồi quy cho data pipeline và xác minh rằng báo cáo luôn nhất quán với artifacts được sinh ra.
+Hiểu cách tách data-quality signals khỏi model metrics và giữ benchmark cố định để so sánh công bằng.

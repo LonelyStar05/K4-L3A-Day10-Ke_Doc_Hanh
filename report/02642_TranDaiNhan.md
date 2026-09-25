@@ -2,21 +2,21 @@
 
 ## Vai trò
 
-Evaluation & Observability Owner.
+RAG Specialist.
 
 ## Phần việc
 
-- Tạo benchmark năm loại câu hỏi dùng chung cho cả ba trạng thái dữ liệu.
-- Xây GX 1.x quality gate và freshness SLA 180 ngày/25% stale ratio.
-- Tổng hợp metrics và sinh báo cáo baseline/corruption có thể kiểm chứng.
+- Xây ChromaDB index bằng MiniLM và semantic search top-k.
+- Hoàn thiện logic retrieval và QA agent trên tài liệu khoa học đã chuẩn hóa.
+- Đánh giá tác động của corruption và repair lên retrieval hit rate, token F1 và câu trả lời.
 
 ## Bằng chứng
 
-- `src/evaluation/testset.py`
-- `src/observability/quality.py`
-- `src/observability/reporting.py`
-- `data/quality/`, `data/reports/`
+- `src/retrieval/`
+- `src/evaluation/metrics.py`
+- `data/embeddings/`
+- `data/results/`
 
 ## Kết quả học được
 
-Hiểu cách tách data-quality signals khỏi model metrics và giữ benchmark cố định để so sánh công bằng.
+Hiểu cách embedding, vector retrieval và QA agent phản ứng với dữ liệu sạch, dữ liệu bị nhiễm độc và dữ liệu đã repair.
