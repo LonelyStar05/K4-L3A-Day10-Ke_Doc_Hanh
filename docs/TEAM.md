@@ -13,6 +13,7 @@
 | 1 | Nguyễn Tú Tài | 02455 | — | Data Ingestion & Cleaning Owner (`crossref.py`, `cleaning.py`, raw/clean artifacts) | `report/02455_NguyenTuTai.md` |
 | 2 | Trần Đại Nhân | 02642 | — | Evaluation & Observability Owner (`testset.py`, `quality.py`, reporting) | `report/02642_TranDaiNhan.md` |
 | 3 | Nguyễn Phú Bình | 02410 | — | Corruption, Retrieval & Pipeline Integrator (`corruption.py`, ChromaDB, phase pipelines) | `report/02410_NguyenPhuBinh.md` |
+| 4 | Phan Văn Nghị | 02632 | — | QA & Reproducibility Owner (automated tests, artifact validation, runbook) | `report/02632_PhanVanNghi.md` |
 
 ---
 
@@ -44,3 +45,12 @@
   - Tiêm đủ sáu lỗi dữ liệu: drop latest, blank summary, text noise, truncated title, stale date và duplicate rows.
   - Điều phối baseline pipeline và self-healing pipeline phục hồi idempotent từ raw snapshot.
 - **Kết quả:** `data/embeddings/`, `data/results/`, `data/reports/corruption_report.md`.
+
+### Phan Văn Nghị - 02632
+
+- **Vai trò:** Phụ trách QA, kiểm thử tích hợp và khả năng tái hiện kết quả.
+- **Công việc chi tiết:**
+  - Kiểm tra các component ingestion, cleaning, quality, benchmark và corruption bằng automated tests.
+  - Đối chiếu artifacts baseline/corrupted/repaired với báo cáo và xác minh metrics ba trạng thái.
+  - Rà soát lệnh chạy, cấu hình offline/mock provider và hướng dẫn tái hiện pipeline trên máy mới.
+- **Kết quả:** `tests/`, `data/results/`, `report/group_report.md`, tài liệu hướng dẫn chạy pipeline.

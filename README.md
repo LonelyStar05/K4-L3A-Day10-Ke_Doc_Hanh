@@ -9,7 +9,7 @@
 
 ## Kết quả nhóm Kẻ Độc Hành
 
-Thành viên: Nguyễn Tú Tài (`02455`), Trần Đại Nhân (`02642`), Nguyễn Phú Bình (`02410`). Chi tiết phân công tại [`docs/TEAM.md`](docs/TEAM.md).
+Thành viên: Nguyễn Tú Tài (`02455`), Trần Đại Nhân (`02642`), Nguyễn Phú Bình (`02410`), Phan Văn Nghị (`02632`). Chi tiết phân công tại [`docs/TEAM.md`](docs/TEAM.md).
 
 | Metric | Baseline | Corrupted | Repaired |
 | --- | ---: | ---: | ---: |

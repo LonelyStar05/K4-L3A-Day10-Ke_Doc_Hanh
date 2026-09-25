@@ -14,6 +14,7 @@
 | 1 | Nguyễn Tú Tài | 02455 | Ingestion & cleaning |
 | 2 | Trần Đại Nhân | 02642 | Evaluation & observability |
 | 3 | Nguyễn Phú Bình | 02410 | Retrieval, corruption & integration |
+| 4 | Phan Văn Nghị | 02632 | QA, testing & reproducibility |
 
 ## 2. Tóm tắt kết quả
 
@@ -93,5 +94,5 @@ Repair không che lỗi tại output. Pipeline đọc lại `data/raw/crossref_r
 - [x] Test set dùng chung cho ba trạng thái.
 - [x] Metrics khớp artifacts trong `data/results/`.
 - [x] Quality/freshness reports đã sinh.
-- [x] Có báo cáo cá nhân cho ba thành viên.
+- [x] Có báo cáo cá nhân cho bốn thành viên.
 - [x] Không commit `.env`, API key hoặc token.
