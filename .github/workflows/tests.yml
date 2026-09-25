@@ -1,0 +1,24 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      # Unit tests only touch ingestion, cleaning, quality and reporting, so the
+      # heavy embedding/LLM stack (torch, chromadb, langchain) is not installed.
+      - name: Install test dependencies
+        run: pip install "pandas>=2.2.2" "great-expectations>=1.16.1" "python-dotenv>=1.0.1" "requests>=2.32.3" "pytest>=8.3.2"
+      - name: Run tests
+        run: pytest -q

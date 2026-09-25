@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
-
 from core.config import load_settings
 from core.utils import write_json
 from evaluation.metrics import evaluate_pipeline
 from evaluation.testset import load_or_create_test_set
 from ingestion.cleaning import build_clean_dataframe
 from ingestion.crossref import fetch_source_records, load_raw_records
-from observability.quality import build_freshness_report, run_data_quality_checks
+from observability.quality import run_data_quality_checks
 from observability.reporting import generate_phase1_report
 from retrieval.index import LocalEmbeddingIndex
 from retrieval.qa import answer_question
@@ -22,13 +20,14 @@ def main() -> None:
     else:
         records = load_raw_records(settings.paths.raw_records_json)
 
-    clean_df = build_clean_dataframe(records, datetime.now(UTC))
+    clean_df = build_clean_dataframe(records, settings.run_date)
     settings.paths.clean_csv.parent.mkdir(parents=True, exist_ok=True)
     clean_df.to_csv(settings.paths.clean_csv, index=False)
     write_json(settings.paths.clean_json, clean_df.to_dict(orient="records"))
 
     quality = run_data_quality_checks(clean_df, settings, "baseline")
-    freshness = build_freshness_report(clean_df, settings, settings.paths.freshness_report)
+    freshness = quality["freshness"]
+    write_json(settings.paths.freshness_report, freshness)
     if not quality["success"]:
         raise RuntimeError("Baseline data failed the quality gate; inspect the quality report.")
 

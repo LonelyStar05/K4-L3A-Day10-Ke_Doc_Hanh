@@ -45,7 +45,24 @@ def _token_f1(reference: str, prediction: str) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
-def _judge_answer(settings: Settings, question: str, reference: str, prediction: str) -> JudgeVerdict:
+def _heuristic_verdict(reference: str, prediction: str) -> JudgeVerdict:
+    f1 = _token_f1(reference, prediction)
+    score = 5 if f1 >= 0.95 else 3 if f1 >= 0.5 else 1
+    return JudgeVerdict(
+        score=score,
+        correct=score >= 3,
+        reasoning="Fallback heuristic judge used because the LLM evaluator was unavailable.",
+    )
+
+
+def _build_judge(settings: Settings):
+    try:
+        return build_llm(settings=settings, temperature=0.0).with_structured_output(JudgeVerdict)
+    except Exception:
+        return None
+
+
+def _judge_answer(judge, question: str, reference: str, prediction: str) -> JudgeVerdict:
     prompt = f"""
 Evaluate the model answer against the reference answer.
 
@@ -58,16 +75,12 @@ Return:
 - correct = true only when the answer is materially correct
 - short reasoning
 """.strip()
+    if judge is None:
+        return _heuristic_verdict(reference, prediction)
     try:
-        llm = build_llm(settings=settings, temperature=0.0).with_structured_output(JudgeVerdict)
-        return llm.invoke(prompt)
+        return judge.invoke(prompt)
     except Exception:
-        score = 5 if _token_f1(reference, prediction) >= 0.95 else 3 if _token_f1(reference, prediction) >= 0.5 else 1
-        return JudgeVerdict(
-            score=score,
-            correct=score >= 3,
-            reasoning="Fallback heuristic judge used because the LLM evaluator was unavailable.",
-        )
+        return _heuristic_verdict(reference, prediction)
 
 
 def _run_ragas(settings: Settings, answers: list[dict[str, Any]]) -> dict[str, Any]:
@@ -108,11 +121,14 @@ def evaluate_pipeline(
     answers_output_path,
 ) -> EvaluationBundle:
     test_set = read_json(test_set_path)
+    if not test_set:
+        raise ValueError(f"Benchmark at {test_set_path} is empty; rebuild it with REFRESH_TEST_SET=1.")
+    judge_llm = _build_judge(settings)
     answers: list[dict[str, Any]] = []
 
     for item in test_set:
         result = answer_question(item["question"], settings=settings, index=index)
-        judge = _judge_answer(settings, item["question"], item["ground_truth"], result.answer)
+        judge = _judge_answer(judge_llm, item["question"], item["ground_truth"], result.answer)
         retrieval_hit = any(doc_id in item["ground_truth_doc_ids"] for doc_id in result.retrieved_doc_ids)
         answers.append(
             {

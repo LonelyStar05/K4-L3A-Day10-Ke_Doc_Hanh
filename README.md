@@ -20,6 +20,17 @@ Vai trò: Nguyễn Tú Tài — Pipeline Lead; Nguyễn Phú Bình — Data Foun
 
 Pipeline hoàn thành 24 records, GX 1.x quality gate, ChromaDB/MiniLM, năm loại benchmark question, sáu corruption scenarios và idempotent repair. Xem [`data/reports/phase1_report.md`](data/reports/phase1_report.md) và [`data/reports/corruption_report.md`](data/reports/corruption_report.md).
 
+**Chạy lại & kiểm thử:**
+
+```bash
+pip install -e ".[dev]"
+day10-phase1                 # hoặc: python script/run_phase1.py
+day10-corruption-flow        # hoặc: python script/run_corruption_flow.py
+pytest -q                    # unit tests (không cần PYTHONPATH)
+```
+
+Snapshot `data/raw/` là cố định nên freshness phụ thuộc ngày chạy. Đặt `PIPELINE_RUN_DATE=2026-07-25` trong `.env` để tái lập đúng kết quả đã báo cáo (bỏ trống = dùng thời gian hiện tại). CI (`.github/workflows/tests.yml`) chạy unit tests trên mỗi push/PR.
+
 ---
 
 ### 🗺️ Bản Đồ Tài Liệu Cho Buổi Lab (Đọc gì trước, đọc gì sau?):

@@ -3,6 +3,8 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
+import pytest
+
 from core.config import load_settings
 from core.utils import read_json
 from evaluation.testset import load_or_create_test_set
@@ -10,13 +12,22 @@ from ingestion.cleaning import build_clean_dataframe
 from ingestion.corruption import corrupt_clean_dataframe
 from ingestion.crossref import load_raw_records, parse_crossref_payload
 from observability.dashboard import age_histogram, detect_alerts, render_dashboard, StateSnapshot
-from observability.quality import run_data_quality_checks
+from observability.quality import build_freshness_report, run_data_quality_checks
+from observability.reporting import generate_corruption_report
+
+# The bundled snapshot is frozen, so freshness is measured against a fixed date
+# instead of the wall clock; otherwise the tests silently rot as time passes.
+SNAPSHOT_RUN_DATE = datetime(2026, 7, 25, tzinfo=UTC)
+
+
+def _settings():
+    return replace(load_settings(), run_date=SNAPSHOT_RUN_DATE)
 
 
 def _clean_dataframe():
-    settings = load_settings()
+    settings = _settings()
     records = load_raw_records(settings.paths.raw_records_json)
-    return settings, build_clean_dataframe(records, datetime.now(UTC))
+    return settings, build_clean_dataframe(records, settings.run_date)
 
 
 def test_crossref_snapshot_parses_24_records():
@@ -114,3 +125,77 @@ def test_dashboard_flags_corrupted_state_and_renders_html(tmp_path):
     html = render_dashboard(test_settings, snapshots, alerts)
     assert html.startswith("<!doctype html>")
     assert "<svg" in html and "paper_id_unique" in html
+
+
+def test_run_date_env_override(monkeypatch):
+    monkeypatch.setenv("PIPELINE_RUN_DATE", "2026-07-25")
+    assert load_settings().run_date == SNAPSHOT_RUN_DATE
+
+    monkeypatch.setenv("PIPELINE_RUN_DATE", "not-a-date")
+    with pytest.raises(RuntimeError, match="PIPELINE_RUN_DATE"):
+        load_settings()
+
+
+def test_freshness_is_deterministic_for_pinned_run_date():
+    settings, df = _clean_dataframe()
+    report = build_freshness_report(df, settings)
+
+    assert report["stale_rows"] == 0
+    assert report["is_fresh"] is True
+    assert report["latest_published"] == "2026-07-22"
+
+    later_settings = replace(settings, run_date=datetime(2027, 7, 25, tzinfo=UTC))
+    later_df = build_clean_dataframe(load_raw_records(settings.paths.raw_records_json), later_settings.run_date)
+    assert build_freshness_report(later_df, later_settings)["is_fresh"] is False
+
+
+def test_parse_crossref_payload_skips_invalid_and_duplicate_items():
+    item = {
+        "DOI": "10.1000/ABC",
+        "title": ["<i>Agentic</i> RAG"],
+        "abstract": "<jats:p>An abstract &amp; more.</jats:p>",
+        "published": {"date-parts": [[2026, 6]]},
+    }
+    payload = {"message": {"items": [item, dict(item), {"DOI": "10.1000/no-title"}, "junk"]}}
+    records = parse_crossref_payload(payload)
+
+    assert len(records) == 1
+    assert records[0].paper_id == "10.1000/abc"
+    assert records[0].title == "Agentic RAG"
+    assert records[0].summary == "An abstract & more."
+    assert records[0].published == "2026-06-01"
+    assert parse_crossref_payload(None) == []
+
+
+def test_repair_is_idempotent():
+    settings, first = _clean_dataframe()
+    second = build_clean_dataframe(load_raw_records(settings.paths.raw_records_json), settings.run_date)
+
+    pd.testing.assert_frame_equal(first, second)
+
+
+def test_corruption_report_uses_baseline_quality(tmp_path):
+    settings, df = _clean_dataframe()
+    test_settings = replace(settings, paths=replace(settings.paths, quality_dir=tmp_path))
+    baseline_quality = run_data_quality_checks(df, test_settings, "unit-baseline")
+    corrupted_quality = run_data_quality_checks(
+        corrupt_clean_dataframe(df, tmp_path / "corruption_log.json"), test_settings, "unit-corrupted"
+    )
+    metrics = {"retrieval_hit_rate": 1.0, "mean_token_f1": 1.0, "judge_accuracy": 1.0, "mean_judge_score": 5}
+    report_path = tmp_path / "corruption_report.md"
+
+    generate_corruption_report(
+        report_path,
+        metrics,
+        metrics,
+        metrics,
+        baseline_quality,
+        corrupted_quality,
+        baseline_quality,
+        corrupted_quality["freshness"],
+        baseline_quality["freshness"],
+    )
+    content = report_path.read_text(encoding="utf-8")
+
+    assert "| Quality gate | PASS | FAIL | PASS |" in content
+    assert "| Freshness SLA | PASS | FAIL | PASS |" in content

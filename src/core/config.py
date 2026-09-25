@@ -71,17 +71,31 @@ class Settings:
     freshness_threshold_days: int
     refresh_source: bool
     refresh_test_set: bool
+    run_date: datetime
     paths: Paths
+
+
+def _parse_run_date(value: str | None) -> datetime:
+    """Resolve the pipeline reference time; PIPELINE_RUN_DATE pins it for reproducible runs."""
+    if not value or not value.strip():
+        return datetime.now(UTC)
+    try:
+        parsed = datetime.fromisoformat(value.strip())
+    except ValueError as exc:
+        raise RuntimeError(f"PIPELINE_RUN_DATE must be an ISO date or datetime, got {value!r}.") from exc
+    return parsed.replace(tzinfo=UTC) if parsed.tzinfo is None else parsed.astimezone(UTC)
 
 
 def load_settings(project_dir: Path | None = None) -> Settings:
     root = (project_dir or Path(__file__).resolve().parents[2]).resolve()
     workspace = root.parent
-    freshness_threshold_days = 180
-    source_from_date = (datetime.now(UTC).date() - timedelta(days=freshness_threshold_days)).isoformat()
 
     load_dotenv(workspace / ".env")
     load_dotenv(root / ".env", override=False)
+
+    run_date = _parse_run_date(os.getenv("PIPELINE_RUN_DATE"))
+    freshness_threshold_days = 180
+    source_from_date = (run_date.date() - timedelta(days=freshness_threshold_days)).isoformat()
 
     data_dir = root / "data"
     paths = Paths(
@@ -140,6 +154,7 @@ def load_settings(project_dir: Path | None = None) -> Settings:
         freshness_threshold_days=freshness_threshold_days,
         refresh_source=os.getenv("REFRESH_SOURCE", "").lower() in {"1", "true", "yes"},
         refresh_test_set=os.getenv("REFRESH_TEST_SET", "").lower() in {"1", "true", "yes"},
+        run_date=run_date,
         paths=paths,
     )
 

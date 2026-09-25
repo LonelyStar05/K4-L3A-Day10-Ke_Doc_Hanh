@@ -34,3 +34,11 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.scripts]
+day10-phase1 = "pipelines.phase1:main"
+day10-corruption-flow = "pipelines.corruption_flow:main"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -5,6 +5,12 @@ from typing import Any
 from core.utils import write_text
 
 
+def _status(payload: dict[str, Any], key: str) -> str:
+    if not payload or key not in payload:
+        return "N/A"
+    return "PASS" if payload[key] else "FAIL"
+
+
 def _metric(payload: dict[str, Any], name: str) -> str:
     value = payload.get(name, 0.0)
     return f"{float(value):.3f}" if isinstance(value, (int, float)) else str(value)
@@ -70,6 +76,7 @@ def generate_corruption_report(
     baseline_metrics: dict[str, Any],
     corrupted_metrics: dict[str, Any],
     repaired_metrics: dict[str, Any],
+    baseline_quality: dict[str, Any],
     corrupted_quality: dict[str, Any],
     repaired_quality: dict[str, Any],
     corrupted_freshness: dict[str, Any],
@@ -77,6 +84,7 @@ def generate_corruption_report(
 ) -> None:
     """Write the evidence-backed baseline/corrupted/repaired comparison."""
     metric_names = ["retrieval_hit_rate", "mean_token_f1", "judge_accuracy", "mean_judge_score"]
+    baseline_freshness = baseline_quality.get("freshness", {})
     metric_rows = "\n".join(
         f"| `{name}` | {_metric(baseline_metrics, name)} | {_metric(corrupted_metrics, name)} | {_metric(repaired_metrics, name)} |"
         for name in metric_names
@@ -88,8 +96,9 @@ def generate_corruption_report(
 | Metric | Baseline | Corrupted | Repaired |
 | --- | ---: | ---: | ---: |
 {metric_rows}
-| Quality gate | {'PASS' if baseline_metrics else 'N/A'} | {'PASS' if corrupted_quality.get('success') else 'FAIL'} | {'PASS' if repaired_quality.get('success') else 'FAIL'} |
-| Freshness SLA | N/A | {'PASS' if corrupted_freshness.get('is_fresh') else 'FAIL'} | {'PASS' if repaired_freshness.get('is_fresh') else 'FAIL'} |
+| Quality gate | {_status(baseline_quality, 'success')} | {_status(corrupted_quality, 'success')} | {_status(repaired_quality, 'success')} |
+| Freshness SLA | {_status(baseline_freshness, 'is_fresh')} | {_status(corrupted_freshness, 'is_fresh')} | {_status(repaired_freshness, 'is_fresh')} |
+| Stale rows | {baseline_freshness.get('stale_rows', 'N/A')} | {corrupted_freshness.get('stale_rows', 'N/A')} | {repaired_freshness.get('stale_rows', 'N/A')} |
 
 ## Findings
 
