@@ -50,9 +50,16 @@ def parse_crossref_payload(payload: dict) -> list[PaperRecord]:
                 return str(date_time)[:10]
         return ""
 
+    if not isinstance(payload, dict):
+        return []
+    message = payload.get("message", {})
+    items = message.get("items", []) if isinstance(message, dict) else []
+
     records: list[PaperRecord] = []
     seen_ids: set[str] = set()
-    for item in payload.get("message", {}).get("items", []):
+    for item in items:
+        if not isinstance(item, dict):
+            continue
         paper_id = normalize_whitespace(str(item.get("DOI", ""))).lower()
         titles = item.get("title") or []
         title = clean_markup(str(titles[0])) if titles else ""
@@ -62,8 +69,14 @@ def parse_crossref_payload(payload: dict) -> list[PaperRecord]:
 
         authors = []
         for author in item.get("author") or []:
+            if not isinstance(author, dict):
+                continue
             full_name = normalize_whitespace(
-                " ".join(part for part in [str(author.get("given", "")), str(author.get("family", ""))] if part)
+                " ".join(
+                    part
+                    for part in [str(author.get("given", "")), str(author.get("family", ""))]
+                    if part
+                )
             )
             if full_name:
                 authors.append(full_name)
@@ -81,7 +94,7 @@ def parse_crossref_payload(payload: dict) -> list[PaperRecord]:
             (
                 str(link.get("URL", ""))
                 for link in links
-                if "pdf" in str(link.get("content-type", "")).lower()
+                if isinstance(link, dict) and "pdf" in str(link.get("content-type", "")).lower()
             ),
             resource_url,
         )
@@ -106,7 +119,7 @@ def parse_crossref_payload(payload: dict) -> list[PaperRecord]:
 
 
 def fetch_source_records(settings: Settings) -> list[PaperRecord]:
-    """Fetch Crossref data with retry and fall back to the bundled snapshot."""
+    """Fetch Crossref with retry, then fall back to the bundled snapshot."""
     snapshot_path = settings.paths.raw_api_response
     payload: dict | None = None
 
