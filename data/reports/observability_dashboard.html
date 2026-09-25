@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Observability Dashboard</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--ink:#1d2330;--muted:#667085;--line:#e3e6ec;
+--ok:#1a7f4b;--ok-bg:#e3f4ea;--bad:#b42318;--bad-bg:#fdecea;--warn:#a15c00;--warn-bg:#fff4df;
+--s-baseline:#3b6fd8;--s-corrupted:#d0503c;--s-repaired:#2f9e6e;--zone:rgba(208,80,60,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11141a;--panel:#1a1f28;--ink:#e6e9ef;
+--muted:#98a2b3;--line:#2a313d;--ok:#4cc38a;--ok-bg:#15301f;--bad:#f97066;--bad-bg:#3a1a17;--warn:#f5b041;
+--warn-bg:#352812;--s-baseline:#6e98f0;--s-corrupted:#f07b67;--s-repaired:#4cc38a;--zone:rgba(240,123,103,.10)}}
+:root[data-theme="dark"]{--bg:#11141a;--panel:#1a1f28;--ink:#e6e9ef;--muted:#98a2b3;--line:#2a313d;--ok:#4cc38a;
+--ok-bg:#15301f;--bad:#f97066;--bad-bg:#3a1a17;--warn:#f5b041;--warn-bg:#352812;--s-baseline:#6e98f0;
+--s-corrupted:#f07b67;--s-repaired:#4cc38a;--zone:rgba(240,123,103,.10)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:17px;margin:0 0 12px}h3{font-size:15px;margin:0;text-transform:capitalize}
+.sub,.muted,.note{color:var(--muted)}.note{font-size:13px;margin:8px 0 0}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:20px 0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:12px;margin-top:12px}
+.stack{display:grid;gap:12px;margin-top:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.badges{margin:8px 0 10px;display:flex;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted);align-items:center}
+.badge{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600;margin-left:4px}
+.badge.ok{color:var(--ok);background:var(--ok-bg)}.badge.bad{color:var(--bad);background:var(--bad-bg)}
+.badge.muted{background:var(--line)}
+.kv{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding:5px 0;font-size:14px}
+.kv b{font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600}th.st{text-transform:capitalize}.num{text-align:right}
+.obs{font-size:12px;color:var(--muted);margin-top:2px}code{font-size:13px}
+svg{width:100%;height:auto;display:block}.grid{stroke:var(--line)}
+.tick,.axis,.zone-label{fill:var(--muted);font-size:11px}.axis{font-size:12px}.zone{fill:var(--zone)}
+.zone-label{fill:var(--bad)}
+.s-baseline{fill:var(--s-baseline);background:var(--s-baseline)}
+.s-corrupted{fill:var(--s-corrupted);background:var(--s-corrupted)}
+.s-repaired{fill:var(--s-repaired);background:var(--s-repaired)}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--muted);margin-bottom:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.alerts{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.alert{display:grid;grid-template-columns:18px 90px 1fr;gap:8px;padding:8px 10px;border-radius:8px;font-size:14px}
+.alert b{text-transform:capitalize}.alert.critical{background:var(--bad-bg)}.alert.critical .ic{color:var(--bad)}
+.alert.warning{background:var(--warn-bg)}.alert.warning .ic{color:var(--warn)}
+.alert.ok{background:var(--ok-bg)}.alert.ok .ic{color:var(--ok)}
+@media (max-width:520px){.alert{grid-template-columns:18px 1fr}.alert span:last-child{grid-column:2}}
+</style></head>
+<body><main>
+<h1>Data Observability Dashboard</h1>
+<p class="sub">Crossref papers · GX 1.x quality gate · Freshness SLA 180 ngày · sinh lúc 2026-09-25 09:27 UTC
+ · <b>6</b> cảnh báo nghiêm trọng, <b>1</b> cảnh báo</p>
+<div class="grid3"><div class="card state">
+  <div class="card-head"><h3>baseline</h3></div>
+  <div class="badges">GX gate <span class="badge ok">PASS</span>
+    Freshness <span class="badge ok">FRESH</span></div>
+  <div class='kv'><span>Số dòng</span><b>24</b></div><div class='kv'><span>Stale ratio</span><b>4.2%</b></div><div class='kv'><span>Hit rate</span><b>1.000</b></div><div class='kv'><span>Token F1</span><b>1.000</b></div>
+</div><div class="card state">
+  <div class="card-head"><h3>corrupted</h3></div>
+  <div class="badges">GX gate <span class="badge bad">FAIL</span>
+    Freshness <span class="badge bad">STALE</span></div>
+  <div class='kv'><span>Số dòng</span><b>24</b></div><div class='kv'><span>Stale ratio</span><b>58.3%</b></div><div class='kv'><span>Hit rate</span><b>0.000</b></div><div class='kv'><span>Token F1</span><b>0.321</b></div>
+</div><div class="card state">
+  <div class="card-head"><h3>repaired</h3></div>
+  <div class="badges">GX gate <span class="badge ok">PASS</span>
+    Freshness <span class="badge ok">FRESH</span></div>
+  <div class='kv'><span>Số dòng</span><b>24</b></div><div class='kv'><span>Stale ratio</span><b>4.2%</b></div><div class='kv'><span>Hit rate</span><b>1.000</b></div><div class='kv'><span>Token F1</span><b>1.000</b></div>
+</div></div>
+<div class="card"><h2>Cảnh báo chất lượng &amp; drift</h2><ul class='alerts'><li class="alert ok"><span class="ic">✓</span><b>baseline</b><span>Tất cả GX checks, Freshness SLA và metrics đều trong ngưỡng.</span></li><li class="alert critical"><span class="ic">●</span><b>corrupted</b><span>GX check paper_id_unique FAIL (observed: 10).</span></li><li class="alert critical"><span class="ic">●</span><b>corrupted</b><span>GX check summary_length_at_least_30 FAIL (observed: 6).</span></li><li class="alert critical"><span class="ic">●</span><b>corrupted</b><span>Vi phạm Freshness SLA: 58.3% bài báo có tuổi &gt; 180 ngày (ngưỡng 25%).</span></li><li class="alert warning"><span class="ic">▲</span><b>corrupted</b><span>Drift phân bố tuổi: median 1930 ngày so với baseline 110 ngày.</span></li><li class="alert critical"><span class="ic">●</span><b>corrupted</b><span>retrieval_hit_rate giảm 1.000 so với baseline (1.000 → 0.000).</span></li><li class="alert critical"><span class="ic">●</span><b>corrupted</b><span>mean_token_f1 giảm 0.679 so với baseline (1.000 → 0.321).</span></li><li class="alert critical"><span class="ic">●</span><b>corrupted</b><span>judge_accuracy giảm 0.600 so với baseline (1.000 → 0.400).</span></li><li class="alert ok"><span class="ic">✓</span><b>repaired</b><span>Tất cả GX checks, Freshness SLA và metrics đều trong ngưỡng.</span></li></ul></div>
+<div class="grid2">
+  <div class="card"><h2>Phân bố tuổi bài báo</h2><div class="legend"><span><i class="s-baseline"></i>baseline</span><span><i class="s-corrupted"></i>corrupted</span><span><i class="s-repaired"></i>repaired</span></div><svg viewBox="0 0 640 260" role="img" aria-label="Tuổi bài báo (ngày) — số bài theo nhóm"><rect x="394.4" y="16" width="233.6" height="200" class="zone"/><text x="624.0" y="28" text-anchor="end" class="zone-label">vượt SLA 180 ngày</text><line x1="44" x2="628" y1="216.0" y2="216.0" class="grid"/><text x="38" y="220.0" text-anchor="end" class="tick">0</text><line x1="44" x2="628" y1="166.0" y2="166.0" class="grid"/><text x="38" y="170.0" text-anchor="end" class="tick">5</text><line x1="44" x2="628" y1="116.0" y2="116.0" class="grid"/><text x="38" y="120.0" text-anchor="end" class="tick">10</text><line x1="44" x2="628" y1="66.0" y2="66.0" class="grid"/><text x="38" y="70.0" text-anchor="end" class="tick">15</text><line x1="44" x2="628" y1="16.0" y2="16.0" class="grid"/><text x="38" y="20.0" text-anchor="end" class="tick">20</text><rect x="64.4" y="216.0" width="24.0" height="0.0" rx="2" class="s-baseline"><title>baseline · 0–30: 0</title></rect><rect x="90.4" y="216.0" width="24.0" height="0.0" rx="2" class="s-corrupted"><title>corrupted · 0–30: 0</title></rect><rect x="116.4" y="216.0" width="24.0" height="0.0" rx="2" class="s-repaired"><title>repaired · 0–30: 0</title></rect><text x="102.4" y="234" text-anchor="middle" class="tick">0–30</text><rect x="181.2" y="186.0" width="24.0" height="30.0" rx="2" class="s-baseline"><title>baseline · 31–90: 3</title></rect><rect x="207.2" y="216.0" width="24.0" height="0.0" rx="2" class="s-corrupted"><title>corrupted · 31–90: 0</title></rect><rect x="233.2" y="186.0" width="24.0" height="30.0" rx="2" class="s-repaired"><title>repaired · 31–90: 3</title></rect><text x="219.2" y="234" text-anchor="middle" class="tick">31–90</text><rect x="298.0" y="16.0" width="24.0" height="200.0" rx="2" class="s-baseline"><title>baseline · 91–180: 20</title></rect><rect x="324.0" y="116.0" width="24.0" height="100.0" rx="2" class="s-corrupted"><title>corrupted · 91–180: 10</title></rect><rect x="350.0" y="16.0" width="24.0" height="200.0" rx="2" class="s-repaired"><title>repaired · 91–180: 20</title></rect><text x="336.0" y="234" text-anchor="middle" class="tick">91–180</text><rect x="414.8" y="206.0" width="24.0" height="10.0" rx="2" class="s-baseline"><title>baseline · 181–365: 1</title></rect><rect x="440.8" y="206.0" width="24.0" height="10.0" rx="2" class="s-corrupted"><title>corrupted · 181–365: 1</title></rect><rect x="466.8" y="206.0" width="24.0" height="10.0" rx="2" class="s-repaired"><title>repaired · 181–365: 1</title></rect><text x="452.8" y="234" text-anchor="middle" class="tick">181–365</text><rect x="531.6" y="216.0" width="24.0" height="0.0" rx="2" class="s-baseline"><title>baseline · > 365: 0</title></rect><rect x="557.6" y="86.0" width="24.0" height="130.0" rx="2" class="s-corrupted"><title>corrupted · > 365: 13</title></rect><rect x="583.6" y="216.0" width="24.0" height="0.0" rx="2" class="s-repaired"><title>repaired · > 365: 0</title></rect><text x="569.6" y="234" text-anchor="middle" class="tick">&gt; 365</text><text x="336.0" y="254" text-anchor="middle" class="axis">Tuổi bài báo (ngày) — số bài theo nhóm</text></svg><p class='note'>baseline: median 110 ngày · corrupted: median 1930 ngày · repaired: median 110 ngày</p></div>
+  <div class="card"><h2>Chỉ số đánh giá RAG</h2><div class="legend"><span><i class="s-baseline"></i>baseline</span><span><i class="s-corrupted"></i>corrupted</span><span><i class="s-repaired"></i>repaired</span></div><svg viewBox="0 0 640 260" role="img" aria-label="Metric (0–1)"><line x1="44" x2="628" y1="216.0" y2="216.0" class="grid"/><text x="38" y="220.0" text-anchor="end" class="tick">0.00</text><line x1="44" x2="628" y1="166.0" y2="166.0" class="grid"/><text x="38" y="170.0" text-anchor="end" class="tick">0.25</text><line x1="44" x2="628" y1="116.0" y2="116.0" class="grid"/><text x="38" y="120.0" text-anchor="end" class="tick">0.50</text><line x1="44" x2="628" y1="66.0" y2="66.0" class="grid"/><text x="38" y="70.0" text-anchor="end" class="tick">0.75</text><line x1="44" x2="628" y1="16.0" y2="16.0" class="grid"/><text x="38" y="20.0" text-anchor="end" class="tick">1.00</text><rect x="103.3" y="16.0" width="24.0" height="200.0" rx="2" class="s-baseline"><title>baseline · retrieval_hit_rate: 1.00</title></rect><rect x="129.3" y="216.0" width="24.0" height="0.0" rx="2" class="s-corrupted"><title>corrupted · retrieval_hit_rate: 0.00</title></rect><rect x="155.3" y="16.0" width="24.0" height="200.0" rx="2" class="s-repaired"><title>repaired · retrieval_hit_rate: 1.00</title></rect><text x="141.3" y="234" text-anchor="middle" class="tick">retrieval_hit_rate</text><rect x="298.0" y="16.0" width="24.0" height="200.0" rx="2" class="s-baseline"><title>baseline · mean_token_f1: 1.00</title></rect><rect x="324.0" y="151.8" width="24.0" height="64.2" rx="2" class="s-corrupted"><title>corrupted · mean_token_f1: 0.32</title></rect><rect x="350.0" y="16.0" width="24.0" height="200.0" rx="2" class="s-repaired"><title>repaired · mean_token_f1: 1.00</title></rect><text x="336.0" y="234" text-anchor="middle" class="tick">mean_token_f1</text><rect x="492.7" y="16.0" width="24.0" height="200.0" rx="2" class="s-baseline"><title>baseline · judge_accuracy: 1.00</title></rect><rect x="518.7" y="136.0" width="24.0" height="80.0" rx="2" class="s-corrupted"><title>corrupted · judge_accuracy: 0.40</title></rect><rect x="544.7" y="16.0" width="24.0" height="200.0" rx="2" class="s-repaired"><title>repaired · judge_accuracy: 1.00</title></rect><text x="530.7" y="234" text-anchor="middle" class="tick">judge_accuracy</text><text x="336.0" y="254" text-anchor="middle" class="axis">Metric (0–1)</text></svg></div>
+</div>
+<div class="stack">
+  <div class="card"><h2>Great Expectations checks</h2><div class="table-wrap"><table><thead><tr><th>Expectation</th><th class='st'>baseline</th><th class='st'>corrupted</th><th class='st'>repaired</th></tr></thead><tbody><tr><td><code>row_count_between_5_and_5000</code></td><td><span class="badge ok">PASS</span><div class='obs'>24</div></td><td><span class="badge ok">PASS</span><div class='obs'>24</div></td><td><span class="badge ok">PASS</span><div class='obs'>24</div></td></tr><tr><td><code>required_values_not_null</code></td><td><span class="badge ok">PASS</span><div class='obs'>paper_id: 0, title: 0, text_for_embedding: 0</div></td><td><span class="badge ok">PASS</span><div class='obs'>paper_id: 0, title: 0, text_for_embedding: 0</div></td><td><span class="badge ok">PASS</span><div class='obs'>paper_id: 0, title: 0, text_for_embedding: 0</div></td></tr><tr><td><code>paper_id_unique</code></td><td><span class="badge ok">PASS</span><div class='obs'>0</div></td><td><span class="badge bad">FAIL</span><div class='obs'>10</div></td><td><span class="badge ok">PASS</span><div class='obs'>0</div></td></tr><tr><td><code>summary_length_at_least_30</code></td><td><span class="badge ok">PASS</span><div class='obs'>0</div></td><td><span class="badge bad">FAIL</span><div class='obs'>6</div></td><td><span class="badge ok">PASS</span><div class='obs'>0</div></td></tr></tbody></table></div></div>
+  <div class="card"><h2>Kịch bản làm bẩn dữ liệu</h2><div class="table-wrap"><p class='note'>6 kịch bản · input 24 dòng → output 24 dòng</p><table><thead><tr><th>Kịch bản</th><th class='num'>Số bản ghi</th></tr></thead><tbody><tr><td><code>drop_latest_records</code></td><td class='num'>5</td></tr><tr><td><code>blank_summary</code></td><td class='num'>3</td></tr><tr><td><code>inject_noise</code></td><td class='num'>3</td></tr><tr><td><code>truncate_title</code></td><td class='num'>3</td></tr><tr><td><code>stale_date</code></td><td class='num'>8</td></tr><tr><td><code>duplicate_rows</code></td><td class='num'>5</td></tr></tbody></table></div></div>
+</div>
+</main></body></html>

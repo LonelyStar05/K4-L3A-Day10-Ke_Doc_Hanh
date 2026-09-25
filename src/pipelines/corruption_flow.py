@@ -10,6 +10,7 @@ from evaluation.metrics import evaluate_pipeline
 from ingestion.cleaning import build_clean_dataframe
 from ingestion.corruption import corrupt_clean_dataframe
 from ingestion.crossref import load_raw_records
+from observability.dashboard import build_dashboard
 from observability.quality import build_freshness_report, run_data_quality_checks
 from observability.reporting import generate_corruption_report
 from pipelines.phase1 import main as run_baseline
@@ -85,3 +86,4 @@ def main() -> None:
             f"{corrupted_eval.summary[metric]:10.3f} {repaired_eval.summary[metric]:9.3f}"
         )
     print(f"Comparison report: {settings.paths.comparison_report}")
+    print(f"Observability dashboard: {build_dashboard(settings)}")
